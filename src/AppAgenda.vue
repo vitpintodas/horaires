@@ -13,13 +13,16 @@
     // récupération des données
     const { data: horaires } = useFetchJson(url);
 
+    // gestion de l'activation des boutons
     const activ = computed(() => {
+        // si la recherche est vide, on retourne false
         if(search.value === '')
         {
             return false;
         }
         else
         {
+            // sinon on retourne la valeur de la recherche
             return search.value;
         }
     });
@@ -28,6 +31,7 @@
     const classes = computed(() => {
         const uniqueClasses = new Set();
 
+        // si les horaires existent, on récupère les classes uniques
         if(horaires.value)
         {
             horaires.value.forEach(cour => {
@@ -35,15 +39,19 @@
             })
         }
 
+        // on retourne un tableau trié
         return Array.from(uniqueClasses).sort();
     });
 
     // filtrage des données en fonction de la classe et tri par date
     const filteredHoraires = computed(() => {
+        // si les horaires existent, on filtre les données
         if(horaires.value)
         {
+            // on filtre les données en fonction de la classe
             const filteredData = horaires.value.filter(cour => cour.class.includes(search.value));
 
+            // on trie les données par date
             filteredData.sort((a, b) => {
                 const dateA = new Date(a.start);
                 const dateB = new Date(b.start);
@@ -56,25 +64,35 @@
 </script>
 
 <template>
+    <!-- header de la page qui est un component -->
     <the-header>
         <h1>IM - Horaires</h1>
     </the-header>
+
+    <!-- boutons de filtrage -->
     <div class="button-container">
+        <!-- bouton pour afficher toutes les classes -->
         <button
             @click="search = ''"
             :class="{ 'active': !activ }"
         >
             Toutes
         </button>
+
+        <!-- boutons pour afficher les classes -->
         <button 
             v-for="cour of classes" 
             :key="cour.id"
             @click="search = cour"
             :class="{ 'active': activ === cour }"
         >
+            <!-- affichage de la classe sans doublon -->
             {{ cour }}
         </button>
-    </div> 
+    </div>
+
+    <!-- tableau des horaires -->
+    <!-- TODO: transformer le tableau en composant -->
     <table>
         <thead>
             <tr>
